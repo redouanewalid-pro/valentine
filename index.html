@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="love.css">
+<title>Valentine</title>
+</head>
+<audio id="bgMusic" src="adj.mp3" loop></audio>
+<audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-game-click-1114.mp3"></audio>
+<audio id="yesMusic" src="yes.mp3"></audio>
+<body>
+
+<div class="container">
+  <h1>Will you be my Valentine ferdaous? 💕</h1>
+
+  <img id="valentineImg" src="https://i.imgur.com/4M7IWwP.png" alt="cute">
+
+  <div class="buttons">
+    <button class="yes" onclick="yesClick()">Yes</button>
+    <button class="no" id="noBtn">Are you positive? 🤨</button>
+  </div>
+</div>
+
+<script>
+const noBtn = document.getElementById("noBtn");
+const img = document.getElementById("valentineImg");
+
+const yesBtn = document.querySelector(".yes");
+
+const bgMusic = document.getElementById("bgMusic");
+const clickSound = document.getElementById("clickSound");
+const yesMusic = document.getElementById("yesMusic");
+
+let yesSize = 1;
+let noSize = 1;
+
+let index = 0;
+
+const messages = [
+  "M2AKDAAA 😏",
+  "YAAAAAAK? 😳",
+  "3AWDI FAKRII 😭",
+  "AKHEER MARA 😬",
+  "MAYMKEEENCH 😈",
+  "SAFE GHA WARKI 💕"
+];
+
+const images = [
+  "pic1.jpeg",
+  "pic2.jpeg",
+  "pic3.jpeg",
+  "pic4.jpeg",
+  "pic5.jpeg",
+  "pic6.jpeg"
+];
+
+// show first image
+img.src = images[0];
+
+function moveBtn() {
+  const btnWidth = noBtn.offsetWidth;
+  const btnHeight = noBtn.offsetHeight;
+
+  const maxX = window.innerWidth - btnWidth;
+  const maxY = window.innerHeight - btnHeight;
+
+  noBtn.style.left = Math.random() * maxX + "px";
+  noBtn.style.top = Math.random() * maxY + "px";
+}
+
+/* 🎯 hover / touch */
+noBtn.addEventListener("mouseover", handleMove);
+noBtn.addEventListener("touchstart", handleMove);
+
+/* 🔥 CLICK SOUND (FIXED) */
+noBtn.addEventListener("click", () => {
+  clickSound.play();
+
+  playNoMusic(); // 🎵 THIS starts music.mp3
+
+  index = (index + 1) % messages.length;
+  noBtn.textContent = messages[index];
+  img.src = images[index];
+
+  moveBtn();
+
+  yesSize += 0.15;
+  yesBtn.style.transform = `scale(${yesSize})`;
+
+  noSize -= 0.05;
+  if (noSize < 0.4) noSize = 0.4;
+  noBtn.style.transform = `scale(${noSize})`;
+
+  vibrate();
+});
+
+/* 📳 vibration */
+function vibrate() {
+  if (navigator.vibrate) navigator.vibrate(100);
+}
+
+function handleMove() {
+  index = (index + 1) % messages.length;
+
+  noBtn.textContent = messages[index];
+  img.src = images[index];
+
+  moveBtn();
+
+  // YES grows
+  yesSize += 0.15;
+  yesBtn.style.transform = `scale(${yesSize})`;
+
+  // NO shrinks
+  noSize -= 0.05;
+  if (noSize < 0.4) noSize = 0.4;
+  noBtn.style.transform = `scale(${noSize})`;
+
+  vibrate();
+}
+
+/* 🎵 start music on first interaction */
+function startMusicOnce() {
+  const music = document.getElementById("bgMusic");
+
+  music.play().catch(() => {
+    console.log("Autoplay blocked — waiting for user interaction");
+  });
+
+  document.removeEventListener("click", startMusicOnce);
+  document.removeEventListener("touchstart", startMusicOnce);
+}
+
+
+
+/* 💖 YES CLICK */
+function yesClick() {
+  bgMusic.pause();
+  bgMusic.currentTime = 0;
+
+  yesMusic.play();
+
+  document.querySelector(".container").style.display = "none";
+
+  const screen = document.createElement("div");
+  screen.className = "love-screen";
+  screen.innerHTML = `
+    <h1>💖 3LA SLAMTNA 💖</h1>
+    <p>BRAAAAAAAAAAVVVVVVOOOO😍</p>
+  `;
+
+  document.body.appendChild(screen);
+
+  startHearts();
+}
+
+/* 💕 hearts */
+function startHearts() {
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML = "💖";
+
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (Math.random() * 20 + 20) + "px";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 4000);
+  }, 300);
+}
+function playNoMusic() {
+  bgMusic.currentTime = 0;
+  bgMusic.play().catch(() => {
+    console.log("Music blocked");
+  });
+}
+</script>
+
+</body>
+</html>
